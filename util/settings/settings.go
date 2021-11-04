@@ -88,8 +88,8 @@ type ArgoCDSettings struct {
 	UiBannerPosition string `json:"uiBannerPosition,omitempty"`
 	// PasswordPattern for password regular expression
 	PasswordPattern string `json:"passwordPattern,omitempty"`
-	// InClusterServerAddressAllowed indicates whether to allow in-cluster server address
-	InClusterServerAddressAllowed bool `json:"inClusterServerAddressAllowed"`
+	// InClusterEnabled indicates whether to allow in-cluster server address
+	InClusterEnabled bool `json:"inClusterEnabled"`
 }
 
 type GoogleAnalytics struct {
@@ -325,8 +325,8 @@ const (
 	partOfArgoCDSelector = "app.kubernetes.io/part-of=argocd"
 	// settingsPasswordPatternKey is the key to configure user password regular expression
 	settingsPasswordPatternKey = "passwordPattern"
-	// inClusterServerAddressAllowedKey is the key to configure whether to allow in-cluster server address
-	inClusterServerAddressAllowedKey = "inClusterServerAddressAllowed"
+	// inClusterEnabledKey is the key to configure whether to allow in-cluster server address
+	inClusterEnabledKey = "cluster.inClusterEnabled"
 )
 
 // SettingsManager holds config info for a new manager with which to access Kubernetes ConfigMaps.
@@ -546,14 +546,6 @@ func (mgr *SettingsManager) GetTrackingMethod() (string, error) {
 		return "", err
 	}
 	return argoCDCM.Data[settingsResourceTrackingMethodKey], nil
-}
-
-func (mgr *SettingsManager) GetInClusterServerAddressAllowed() (bool, error) {
-	argoCDCM, err := mgr.getConfigMap()
-	if err != nil {
-		return true, err
-	}
-	return argoCDCM.Data[inClusterServerAddressAllowedKey] == "true", nil
 }
 
 func (mgr *SettingsManager) GetPasswordPattern() (string, error) {
@@ -1105,7 +1097,7 @@ func updateSettingsFromConfigMap(settings *ArgoCDSettings, argoCDCM *apiv1.Confi
 	if settings.PasswordPattern == "" {
 		settings.PasswordPattern = common.PasswordPatten
 	}
-	settings.InClusterServerAddressAllowed = argoCDCM.Data[inClusterServerAddressAllowedKey] != "false"
+	settings.InClusterEnabled = argoCDCM.Data[inClusterEnabledKey] != "false"
 }
 
 // validateExternalURL ensures the external URL that is set on the configmap is valid

@@ -135,13 +135,13 @@ func TestGetConfigManagementPlugins(t *testing.T) {
 	}}, plugins)
 }
 
-func TestInClusterServerAddressAllowed(t *testing.T) {
+func TestInClusterServerAddressEnabled(t *testing.T) {
 	_, settingsManager := fixtures(map[string]string{
-		"inClusterServerAddressAllowed": "true",
+		"cluster.inClusterEnabled": "true",
 	})
-	allowed, err := settingsManager.GetInClusterServerAddressAllowed()
+	argoCDCM, err := settingsManager.getConfigMap()
 	assert.NoError(t, err)
-	assert.Equal(t, true, allowed)
+	assert.Equal(t, true, argoCDCM.Data[inClusterEnabledKey] == "true")
 }
 
 func TestGetAppInstanceLabelKey(t *testing.T) {

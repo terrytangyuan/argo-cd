@@ -60,10 +60,11 @@ func (db *db) ListClusters(ctx context.Context) (*appv1.ClusterList, error) {
 	clusterList := appv1.ClusterList{
 		Items: make([]appv1.Cluster, 0),
 	}
-	inClusterServerAddressAllowed, err := db.settingsMgr.GetInClusterServerAddressAllowed()
+	settings, err := db.settingsMgr.GetSettings()
 	if err != nil {
 		return nil, err
 	}
+	inClusterEnabled := settings.InClusterEnabled
 	hasInClusterCredentials := false
 	for _, clusterSecret := range clusterSecrets {
 		cluster, err := secretToCluster(clusterSecret)
@@ -72,7 +73,7 @@ func (db *db) ListClusters(ctx context.Context) (*appv1.ClusterList, error) {
 			continue
 		}
 		if cluster.Server == appv1.KubernetesInternalAPIServerAddr {
-			if inClusterServerAddressAllowed {
+			if inClusterEnabled {
 				hasInClusterCredentials = true
 				clusterList.Items = append(clusterList.Items, *cluster)
 			} else {
