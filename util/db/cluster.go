@@ -74,14 +74,16 @@ func (db *db) ListClusters(ctx context.Context) (*appv1.ClusterList, error) {
 		if cluster.Server == appv1.KubernetesInternalAPIServerAddr {
 			if inClusterServerAddressAllowed {
 				hasInClusterCredentials = true
+				clusterList.Items = append(clusterList.Items, *cluster)
 			} else {
-				return &clusterList, fmt.Errorf("failed to add cluster %q to cluster list: in-cluster server address is disabled in Argo CD settings", cluster.Name)
+				log.Errorf("failed to add cluster %q to cluster list: in-cluster server address is disabled in Argo CD settings", cluster.Name)
 			}
+		} else {
+			if !hasInClusterCredentials {
+				clusterList.Items = append(clusterList.Items, *db.getLocalCluster())
+			}
+			clusterList.Items = append(clusterList.Items, *cluster)
 		}
-		clusterList.Items = append(clusterList.Items, *cluster)
-	}
-	if !hasInClusterCredentials {
-		clusterList.Items = append(clusterList.Items, *db.getLocalCluster())
 	}
 	return &clusterList, nil
 }

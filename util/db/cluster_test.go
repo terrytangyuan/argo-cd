@@ -2,7 +2,6 @@ package db
 
 import (
 	"context"
-	"fmt"
 	"testing"
 	"time"
 
@@ -310,7 +309,7 @@ func TestListClusters(t *testing.T) {
 		db := NewDB(fakeNamespace, settingsManager, kubeclientset)
 
 		clusters, err := db.ListClusters(context.TODO())
-		require.Error(t, fmt.Errorf("failed to add cluster %s to cluster list: in-cluster server address is disabled in Argo CD settings", validSecret1.ClusterName), err)
+		require.NoError(t, err)
 		// ListClusters() should not add the cluster with in-cluster server address since it's not allowed
 		assert.Len(t, clusters.Items, 0)
 	})
