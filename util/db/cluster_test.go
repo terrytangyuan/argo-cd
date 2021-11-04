@@ -232,6 +232,19 @@ func TestListClusters(t *testing.T) {
 		},
 		Data: map[string]string{"inClusterServerAddressAllowed": "false"},
 	}
+	argoCDSecret := &v1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      common.ArgoCDSecretName,
+			Namespace: fakeNamespace,
+			Labels: map[string]string{
+				"app.kubernetes.io/part-of": "argocd",
+			},
+		},
+		Data: map[string][]byte{
+			"admin.password":   nil,
+			"server.secretkey": nil,
+		},
+	}
 	validSecret1 := &v1.Secret{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "mycluster1",
@@ -273,7 +286,7 @@ func TestListClusters(t *testing.T) {
 	}
 
 	t.Run("Valid clusters", func(t *testing.T) {
-		kubeclientset := fake.NewSimpleClientset(validSecret1, validSecret2, emptyArgoCDConfigMap)
+		kubeclientset := fake.NewSimpleClientset(validSecret1, validSecret2, emptyArgoCDConfigMap, argoCDSecret)
 		settingsManager := settings.NewSettingsManager(context.Background(), kubeclientset, fakeNamespace)
 		db := NewDB(fakeNamespace, settingsManager, kubeclientset)
 
@@ -283,7 +296,7 @@ func TestListClusters(t *testing.T) {
 	})
 
 	t.Run("Cluster list with invalid cluster", func(t *testing.T) {
-		kubeclientset := fake.NewSimpleClientset(validSecret1, validSecret2, invalidSecret, emptyArgoCDConfigMap)
+		kubeclientset := fake.NewSimpleClientset(validSecret1, validSecret2, invalidSecret, emptyArgoCDConfigMap, argoCDSecret)
 		settingsManager := settings.NewSettingsManager(context.Background(), kubeclientset, fakeNamespace)
 		db := NewDB(fakeNamespace, settingsManager, kubeclientset)
 
@@ -293,7 +306,7 @@ func TestListClusters(t *testing.T) {
 	})
 
 	t.Run("Implicit in-cluster secret", func(t *testing.T) {
-		kubeclientset := fake.NewSimpleClientset(validSecret2, emptyArgoCDConfigMap)
+		kubeclientset := fake.NewSimpleClientset(validSecret2, emptyArgoCDConfigMap, argoCDSecret)
 		settingsManager := settings.NewSettingsManager(context.Background(), kubeclientset, fakeNamespace)
 		db := NewDB(fakeNamespace, settingsManager, kubeclientset)
 
@@ -304,7 +317,7 @@ func TestListClusters(t *testing.T) {
 	})
 
 	t.Run("In-cluster server address not allowed", func(t *testing.T) {
-		kubeclientset := fake.NewSimpleClientset(validSecret1, argoCDConfigMapWithInclusterServerAddressDisabled)
+		kubeclientset := fake.NewSimpleClientset(validSecret1, argoCDConfigMapWithInclusterServerAddressDisabled, argoCDSecret)
 		settingsManager := settings.NewSettingsManager(context.Background(), kubeclientset, fakeNamespace)
 		db := NewDB(fakeNamespace, settingsManager, kubeclientset)
 
