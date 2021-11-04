@@ -135,6 +135,15 @@ func TestGetConfigManagementPlugins(t *testing.T) {
 	}}, plugins)
 }
 
+func TestInClusterServerAddressAllowed(t *testing.T) {
+	_, settingsManager := fixtures(map[string]string{
+		"inClusterServerAddressAllowed": "true",
+	})
+	allowed, err := settingsManager.GetInClusterServerAddressAllowed()
+	assert.NoError(t, err)
+	assert.Equal(t, true, allowed)
+}
+
 func TestGetAppInstanceLabelKey(t *testing.T) {
 	_, settingsManager := fixtures(map[string]string{
 		"application.instanceLabelKey": "testLabel",

@@ -60,6 +60,10 @@ func (db *db) ListClusters(ctx context.Context) (*appv1.ClusterList, error) {
 	clusterList := appv1.ClusterList{
 		Items: make([]appv1.Cluster, 0),
 	}
+	inClusterServerAddressAllowed, err := db.settingsMgr.GetInClusterServerAddressAllowed()
+	if err != nil {
+		return nil, err
+	}
 	hasInClusterCredentials := false
 	for _, clusterSecret := range clusterSecrets {
 		cluster, err := secretToCluster(clusterSecret)
@@ -67,10 +71,14 @@ func (db *db) ListClusters(ctx context.Context) (*appv1.ClusterList, error) {
 			log.Errorf("could not unmarshal cluster secret %s", clusterSecret.Name)
 			continue
 		}
-		clusterList.Items = append(clusterList.Items, *cluster)
 		if cluster.Server == appv1.KubernetesInternalAPIServerAddr {
-			hasInClusterCredentials = true
+			if inClusterServerAddressAllowed {
+				hasInClusterCredentials = true
+			} else {
+				return &clusterList, fmt.Errorf("failed to add cluster %q to cluster list: in-cluster server address is disabled in Argo CD settings", cluster.Name)
+			}
 		}
+		clusterList.Items = append(clusterList.Items, *cluster)
 	}
 	if !hasInClusterCredentials {
 		clusterList.Items = append(clusterList.Items, *db.getLocalCluster())
