@@ -311,6 +311,7 @@ func TestListClusters(t *testing.T) {
 		clusters, err := db.ListClusters(context.TODO())
 		require.NoError(t, err)
 		// ListClusters() should not add the cluster with in-cluster server address since it's not allowed
-		assert.Len(t, clusters.Items, 0)
+		// Here we only have one implicit in-cluster secret.
+		assert.Len(t, clusters.Items, 1)
 	})
 }

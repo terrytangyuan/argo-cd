@@ -1105,7 +1105,7 @@ func updateSettingsFromConfigMap(settings *ArgoCDSettings, argoCDCM *apiv1.Confi
 	if settings.PasswordPattern == "" {
 		settings.PasswordPattern = common.PasswordPatten
 	}
-	settings.InClusterServerAddressAllowed = argoCDCM.Data[inClusterServerAddressAllowedKey] == "true"
+	settings.InClusterServerAddressAllowed = argoCDCM.Data[inClusterServerAddressAllowedKey] != "false"
 }
 
 // validateExternalURL ensures the external URL that is set on the configmap is valid
