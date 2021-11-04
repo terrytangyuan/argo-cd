@@ -316,7 +316,7 @@ func TestListClusters(t *testing.T) {
 		assert.Len(t, clusters.Items, 2)
 	})
 
-	t.Run("ListClusters() should not add the cluster with in-cluster server address since it's not allowed", func(t *testing.T) {
+	t.Run("ListClusters() should not add the cluster with in-cluster server address since in-cluster disabled", func(t *testing.T) {
 		kubeclientset := fake.NewSimpleClientset(secretForServerWithInClusterAddr, argoCDConfigMapWithInClusterServerAddressDisabled, argoCDSecret)
 		settingsManager := settings.NewSettingsManager(context.Background(), kubeclientset, fakeNamespace)
 		db := NewDB(fakeNamespace, settingsManager, kubeclientset)
