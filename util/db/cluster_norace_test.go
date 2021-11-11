@@ -4,10 +4,12 @@ package db
 
 import (
 	"context"
-	"github.com/argoproj/argo-cd/v2/common"
+	"testing"
+
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"testing"
+
+	"github.com/argoproj/argo-cd/v2/common"
 
 	"github.com/stretchr/testify/assert"
 	"k8s.io/client-go/kubernetes/fake"

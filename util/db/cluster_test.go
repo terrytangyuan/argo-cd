@@ -197,8 +197,8 @@ func TestRejectCreationForInClusterWhenDisabled(t *testing.T) {
 	settingsManager := settings.NewSettingsManager(context.Background(), kubeclientset, fakeNamespace)
 	db := NewDB(fakeNamespace, settingsManager, kubeclientset)
 	_, err := db.CreateCluster(context.Background(), &appv1.Cluster{
-		Server:             appv1.KubernetesInternalAPIServerAddr,
-		Name:               "incluster-name",
+		Server: appv1.KubernetesInternalAPIServerAddr,
+		Name:   "incluster-name",
 	})
 	assert.Error(t, err)
 }
