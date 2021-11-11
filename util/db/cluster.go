@@ -83,7 +83,7 @@ func (db *db) ListClusters(ctx context.Context) (*appv1.ClusterList, error) {
 			clusterList.Items = append(clusterList.Items, *cluster)
 		}
 	}
-	if !hasInClusterCredentials {
+	if inClusterEnabled && !hasInClusterCredentials {
 		clusterList.Items = append(clusterList.Items, *db.getLocalCluster())
 	}
 	return &clusterList, nil
@@ -91,6 +91,13 @@ func (db *db) ListClusters(ctx context.Context) (*appv1.ClusterList, error) {
 
 // CreateCluster creates a cluster
 func (db *db) CreateCluster(ctx context.Context, c *appv1.Cluster) (*appv1.Cluster, error) {
+	settings, err := db.settingsMgr.GetSettings()
+	if err != nil {
+		return nil, err
+	}
+	if c.Server == appv1.KubernetesInternalAPIServerAddr && !settings.InClusterEnabled {
+		return nil, status.Errorf(codes.InvalidArgument, "cannot register cluster: in-cluster has been disabled")
+	}
 	secName, err := URIToSecretName("cluster", c.Server)
 	if err != nil {
 		return nil, err
