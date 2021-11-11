@@ -13,8 +13,8 @@ KUSTOMIZE_VERSION=${KUSTOMIZE_VERSION:-$kustomize4_version}
 # v3.3.0 = https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v3.3.0/kustomize_v3.3.0_linux_amd64.tar.gz
 case $ARCHITECTURE in
   arm|arm64)
-      export TARGET_FILE=kustomize_${KUSTOMIZE_VERSION}_linux_${ARCHITECTURE}.tar.gz
-      URL=https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_linux_$ARCHITECTURE.tar.gz
+      export TARGET_FILE=kustomize_${KUSTOMIZE_VERSION}_${HOST_OS}_${ARCHITECTURE}.tar.gz
+      URL=https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_${HOST_OS}_$ARCHITECTURE.tar.gz
       BINNAME=kustomize
       [ -e ${DOWNLOADS}/${TARGET_FILE} ] || curl -sLf --retry 3 -o ${DOWNLOADS}/${TARGET_FILE} "$URL"
       $(dirname $0)/compare-chksum.sh
@@ -24,16 +24,16 @@ case $ARCHITECTURE in
   *)
     case $KUSTOMIZE_VERSION in
       2.*)
-        export TARGET_FILE=kustomize_${KUSTOMIZE_VERSION}_linux_${ARCHITECTURE}
-        URL=https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_linux_$ARCHITECTURE
+        export TARGET_FILE=kustomize_${KUSTOMIZE_VERSION}_${HOST_OS}_${ARCHITECTURE}
+        URL=https://github.com/kubernetes-sigs/kustomize/releases/download/v${KUSTOMIZE_VERSION}/kustomize_${KUSTOMIZE_VERSION}_${HOST_OS}_$ARCHITECTURE
         BINNAME=kustomize2
         [ -e ${DOWNLOADS}/${TARGET_FILE} ] || curl -sLf --retry 3 -o ${DOWNLOADS}/${TARGET_FILE} "$URL"
         $(dirname $0)/compare-chksum.sh
         sudo install -m 0755 ${DOWNLOADS}/${TARGET_FILE} $BIN/$BINNAME
         ;;
       *)
-        export TARGET_FILE=kustomize_${KUSTOMIZE_VERSION}_linux_${ARCHITECTURE}.tar.gz
-        URL=https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_linux_$ARCHITECTURE.tar.gz
+        export TARGET_FILE=kustomize_${KUSTOMIZE_VERSION}_${HOST_OS}_${ARCHITECTURE}.tar.gz
+        URL=https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v${KUSTOMIZE_VERSION}/kustomize_v${KUSTOMIZE_VERSION}_${HOST_OS}_$ARCHITECTURE.tar.gz
         BINNAME=kustomize
         [ -e ${DOWNLOADS}/${TARGET_FILE} ] || curl -sLf --retry 3 -o ${DOWNLOADS}/${TARGET_FILE} "$URL"
         $(dirname $0)/compare-chksum.sh

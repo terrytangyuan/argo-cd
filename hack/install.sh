@@ -7,8 +7,10 @@ export BIN=${BIN:-/usr/local/bin}
 mkdir -p $DOWNLOADS
 
 ARCHITECTURE=""
+HOST_OS="linux"
 case $(uname -m) in
     x86_64)                     ARCHITECTURE="amd64" ;;
+    arm64)                      ARCHITECTURE="arm64"; HOST_OS="darwin";;
     arm|armv7l|armv8l|aarch64)  dpkg --print-architecture | grep -q "arm64" && ARCHITECTURE="arm64" || ARCHITECTURE="arm" ;;
 esac
 
@@ -18,5 +20,5 @@ if [ -z "$ARCHITECTURE" ]; then
 fi
 
 for product in $*; do
-  ARCHITECTURE=$ARCHITECTURE "$(dirname $0)/installers/install-${product}.sh"
+  ARCHITECTURE=$ARCHITECTURE HOST_OS=$HOST_OS "$(dirname $0)/installers/install-${product}.sh"
 done
