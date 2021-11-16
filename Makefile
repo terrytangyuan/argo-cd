@@ -386,7 +386,9 @@ test-e2e-local: cli-local
 	ARGOCD_GPG_ENABLED=true NO_PROXY=* ./hack/test.sh -timeout $(ARGOCD_E2E_TEST_TIMEOUT) -v ./test/e2e
 	curl -L -o $(GOPATH)/bin/stern -- https://github.com/wercker/stern/releases/download/1.11.0/stern_linux_amd64
 	chmod +x $(GOPATH)/bin/stern
-	$(GOPATH)/bin/stern --all-namespaces -l app=workflow-controller 2>&1
+	$(GOPATH)/bin/stern --all-namespaces -l app.kubernetes.io/name=argocd-application-controller 2>&1
+	$(GOPATH)/bin/stern --all-namespaces -l app.kubernetes.io/name=argocd-repo-server 2>&1
+	$(GOPATH)/bin/stern --all-namespaces -l app.kubernetes.io/name=argocd-server 2>&1
 
 # Spawns a shell in the test server container for debugging purposes
 debug-test-server: test-tools-image

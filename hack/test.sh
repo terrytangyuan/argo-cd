@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eux -o pipefail
+set -ux -o pipefail
 
 which go-junit-report || go get github.com/jstemmer/go-junit-report
 
