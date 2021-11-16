@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ux -o pipefail
+set -ux -o
 
 which go-junit-report || go get github.com/jstemmer/go-junit-report
 
@@ -16,7 +16,7 @@ fi
 mkdir -p $TEST_RESULTS
 
 report() {
-  set -eux -o pipefail
+  set -ux -o
 
   go-junit-report < $TEST_RESULTS/test.out > $TEST_RESULTS/junit.xml
 }
