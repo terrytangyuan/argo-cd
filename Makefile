@@ -384,6 +384,8 @@ test-e2e-local: cli-local
 	# NO_PROXY ensures all tests don't go out through a proxy if one is configured on the test system
 	export GO111MODULE=off
 	ARGOCD_GPG_ENABLED=true NO_PROXY=* ./hack/test.sh -timeout $(ARGOCD_E2E_TEST_TIMEOUT) -v ./test/e2e
+	curl -L -o $(GOPATH)/bin/stern https://github.com/wercker/stern/releases/download/1.11.0/stern_linux_amd64
+	$(GOPATH)/bin/stern --all-namespaces -l app=workflow-controller 2>&1
 
 # Spawns a shell in the test server container for debugging purposes
 debug-test-server: test-tools-image
